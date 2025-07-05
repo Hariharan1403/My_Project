@@ -1,0 +1,85 @@
+name: Salesforce Deployment MAIN
+ 
+on:
+  push:
+    branches: [ main ]
+    paths:
+        - 'force-app/**'
+        - 'manifest/**'
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 'Read PR Body'
+        env:
+                PR_BODY: ${{github.event.pull_request.body}}
+        run: |
+
+          FILE=./parsePR.js
+          if test -f "$FILE"; then
+              echo "Node.js file found. Checking which tests to run"
+              echo $PR_BODY > ./pr_body.txt
+              node ./parsePR.js              
+              TESTS=$(cat testsToRun.txt)
+              echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV    
+          else
+              echo "Node.js file not found. All tests will be run"
+              TESTS=all
+              echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
+          fi    
+         
+      - name: 'Install Salesforce CLI'
+        run: |
+                  npm install --global sfdx-cli@latest
+      - name: 'Installing sfdx git delta'
+        run: |
+                  echo y | sfdx plugins:install sfdx-git-delta
+                  sfdx plugins
+                 
+      - name: 'Installing java'
+        run: |
+                sudo apt-get update
+                sudo apt install default-jdk
+
+      - name: 'Populate auth file with SFDX_URL secret of org'
+        shell: bash
+        run: |
+                  echo ${{ secrets.SFDX_MAIN_URL}} > ./SFDX_MAIN_URL.txt
+
+      - name: 'Authenticate to Main Org'
+        run: sfdx auth:sfdxurl:store -f ./SFDX_MAIN_URL.txt
+
+      - name: 'Create delta packages for new, modified or deleted metadata'
+        run: |
+                  mkdir changed-sources
+                  sfdx sgd:source:delta --to "HEAD" --from "HEAD^" -o changed-sources/ --generate-delta -s force-app/
+       
+      - name: 'Create a manifest'
+        run: |
+                  sfdx project generate manifest -p changed-sources -n manifest/deployPackage
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+                name: my-artifact-main
+                path: changed-sources/
+
+      - name: 'Deploy changes/destructive changes (if any)'
+        run: |
+                if [ "${{ env.APEX_TESTS }}" == "all" ]; then
+                    echo "Running deployment with no tests"
+                        sfdx force:source:deploy -x manifest/deployPackage.xml --predestructivechanges manifest/destructiveChangesPre.xml --postdestructivechanges manifest/destructiveChangesPost.xml --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                elif [ "${{ env.APEX_TESTS }}" != "all" ]; then
+                    echo "Running deployment with specified tests"
+                        sfdx force:source:deploy -x manifest/deployPackage.xml --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --predestructivechanges manifest/destructiveChangesPre.xml --postdestructivechanges manifest/destructiveChangesPost.xml --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                fi
