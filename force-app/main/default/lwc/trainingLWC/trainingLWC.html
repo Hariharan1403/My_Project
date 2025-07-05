@@ -1,0 +1,16 @@
+<template>
+    <lightning-card>
+        <lightning-input label="Training Id" value={trainingId} onchange={handletrainingId}></lightning-input>
+        <lightning-input label="Start Date" type="Date" value={startDate} onchange={handlestartDate}></lightning-input>
+        <lightning-input label="Trainer Name" value={trainerName} onchange={handletrainerName}></lightning-input>
+        <lightning-input label="Training Name" value={trainingName} onchange={handletrainingName}></lightning-input>
+        <lightning-input label="POC" value={poc} onchange={handlepoc}></lightning-input>
+        <lightning-input label="Sme Name" value={smeName} onchange={handlesmeName}></lightning-input>
+        <lightning-button label="Add Training" onclick={handleSubmit}></lightning-button>
+       <lightning-datatable
+                key-field="id"
+                data={allTrainings.data}
+                columns={columns}>
+       </lightning-datatable>
+    </lightning-card>
+</template>

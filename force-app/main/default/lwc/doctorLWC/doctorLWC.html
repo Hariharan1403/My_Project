@@ -1,0 +1,10 @@
+<template>
+    <lightning-input label="Enter Doctor Name" onchange={handledocName} value={docName}></lightning-input>
+        <lightning-button label="Search" onclick={getDoctor}></lightning-button>
+        <p>Doctors :</p>
+        <lightning-datatable key-field="Id" data={doctors} columns={columnsDoc}>
+        </lightning-datatable>
+         <p>Appointments :</p>
+        <lightning-datatable key-field="Id" data={appointments} columns={columnsApp}>
+        </lightning-datatable>
+</template>

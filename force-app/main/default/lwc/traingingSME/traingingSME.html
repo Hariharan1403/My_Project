@@ -1,0 +1,9 @@
+<template>
+    <lightning-input label="Name" value={name} onchange={handleName}></lightning-input>
+    <lightning-input  label="TraingingId" value={trainingId} onchange={handleId}></lightning-input>
+    <lightning-input  label="Start Date" value={startdate} onchange={handleStartDate}></lightning-input>
+    <lightning-input  label="Poc" value={Poc}  onchange={handlePoc}></lightning-input>
+    <lightning-input label="SME name" value={smeName} onchange={handleSME}></lightning-input>
+<lightning-button label="Add Traingn" onclick={addTrainging}></lightning-button>
+<lightning-datatable columns={columns} data={training.data} key-field="id"></lightning-datatable>
+</template>

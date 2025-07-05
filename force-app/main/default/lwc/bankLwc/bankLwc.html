@@ -1,0 +1,10 @@
+<template>
+    <lightning-input label="Account Number" value={accNo} onchange={handleaccNo}></lightning-input>
+    <lightning-input lable="Amount" value={amount} onchange={handleAmount}></lightning-input>
+    <lightning-button label="Deposit" onclick={handleDeposit}></lightning-button>
+    <lightning-button label="Withdraw" onclick={handleWithdraw}></lightning-button>
+    <lightning-datatable
+        key-field="id"
+        data={accounts.data}
+        columns={columns}></lightning-datatable>
+</template>

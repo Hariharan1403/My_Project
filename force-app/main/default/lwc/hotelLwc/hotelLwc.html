@@ -1,0 +1,14 @@
+<template>
+    <lightning-datatable
+            key-field="id"
+            data={customers.data}
+            columns={columns}></lightning-datatable>
+            <lightning-input label="Search" value={searchKey} onchange={handleChange}></lightning-input>
+            
+          <lightning-button label="Customer Bookings" onclick={handleBooking}></lightning-button>
+          {bookings}
+            <lightning-datatable 
+            key-field="id"
+            data={bookings}
+            columns={columnsBooking}></lightning-datatable>
+</template>
