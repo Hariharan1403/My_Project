@@ -13,7 +13,6 @@ if (match && match[1]) {
     .map(name => name.trim())
     .filter(name => name.length > 0);
 }
-
 if (testNames.length > 0) {
   fs.writeFileSync('testsToRun.txt', testNames.join(','));
 } else {
