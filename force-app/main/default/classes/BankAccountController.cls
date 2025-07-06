@@ -12,10 +12,7 @@ public with sharing class BankAccountController {
         catch(Exception e){
             throw new InvalidAccountNumberException('No such account');
         }
-        return foundAccount;
-        
-            
-    
+        return foundAccount;    
      }
      @AuraEnabled
     public static boolean deposit(String accNo,Double Amount) {
