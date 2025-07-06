@@ -1,9 +1,9 @@
-name: Salesforce Validation R1CI
+name: Salesforce Validation main
  
 on:
     pull_request:
       types: [opened, synchronize]
-      branches: [ r1ci ]
+      branches: [ main ]
       paths:
         - 'force-app/**'
         - 'manifest/**'
@@ -59,6 +59,7 @@ jobs:
 
       - name: 'Authenticate to Main Org'
         run: sfdx auth:sfdxurl:store -f ./SFDX_MAIN_URL.txt
+
 
       - name: 'Create delta packages for new, modified or deleted metadata'
         run: |
