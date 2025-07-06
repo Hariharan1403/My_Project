@@ -1,10 +1,10 @@
 @isTest
-private class BankControllerTest {
+private class BankControNewTest {
 
     @isTest
     static void testBankControllerOperations() {
         // Create BankController instance
-        BankController controller = new BankController('Alice', 1000);
+        BankControNewTest controller = new BankControNewTest('Alice', 1000);
 
         // Test initial balance
         System.assertEquals(1000, controller.getBalance(), 'Initial balance should be 1000');
@@ -20,7 +20,7 @@ private class BankControllerTest {
 
     @isTest
     static void testNegativeDeposit() {
-        BankController controller = new BankController('Bob', 200);
+        BankControNewTest controller = new BankControNewTest('Bob', 200);
         try {
             controller.depositFunds(-100);
             System.assert(false, 'Negative deposit should throw an exception');
@@ -31,7 +31,7 @@ private class BankControllerTest {
 
     @isTest
     static void testInsufficientFundsWithdrawal() {
-        BankController controller = new BankController('Charlie', 100);
+        BankControNewTest controller = new BankControNewTest('Charlie', 100);
         try {
             controller.withdrawFunds(200);
             System.assert(false, 'Over-withdrawal should throw an exception');
