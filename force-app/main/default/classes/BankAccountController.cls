@@ -3,6 +3,8 @@ public with sharing class BankAccountController {
     public static List<Bank_Account__c> getAllAccounts(){
         return [select Name,Account_Number__c,Balance__c,Account_Type__c from Bank_Account__c];
     }
+
+
     @AuraEnabled
      public static Bank_Account__c getFoundAccount(String accNo){
         Bank_Account__c foundAccount=null;
