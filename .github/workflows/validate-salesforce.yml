@@ -55,10 +55,18 @@ jobs:
       - name: 'Populate auth file with SFDX_URL secret of org'
         shell: bash
         run: |
-                  echo ${{ secrets.SFDX_MAIN_URL}} > ./SFDX_MAIN_URL.txt
+                echo "${{ secrets.SFDX_MAIN_URL }}" | tr -d '\r' > ./SFDX_MAIN_URL.txt
+
+      - name: 'Check auth file formatting (for debugging)'
+        run: |
+                echo "SFDX auth file line count:"
+                wc -l ./SFDX_MAIN_URL.txt
+                echo "First few characters:"
+                head -c 20 ./SFDX_MAIN_URL.txt | od -c
 
       - name: 'Authenticate to Main Org'
-        run: sfdx auth:sfdxurl:store -f ./SFDX_MAIN_URL.txt
+        run: sfdx auth:sfdxurl:store -f ./SFDX_MAIN_URL.txt --setalias mainOrg
+
 
       - name: 'Create delta packages for new, modified or deleted metadata'
         run: |
