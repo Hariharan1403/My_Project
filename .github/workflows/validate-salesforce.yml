@@ -1,9 +1,9 @@
-name: Salesforce Validation R1CI
+name: Salesforce Validation main
  
 on:
     pull_request:
       types: [opened, synchronize]
-      branches: [ r1ci ]
+      branches: [ main ]
       paths:
         - 'force-app/**'
         - 'manifest/**'
