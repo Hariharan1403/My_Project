@@ -42,8 +42,7 @@ jobs:
       - name: Install Salesforce CLI (sf)
         run: |
                 npm install --global sf
-                export PATH="$(npm bin -g):$PATH"
-                echo "PATH=$PATH" >> $GITHUB_ENV
+                echo "$(npm bin -g)" >> $GITHUB_PATH
                 which sf        
 
       - name: Install Salesforce CLI
