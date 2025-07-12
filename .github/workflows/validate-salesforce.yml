@@ -39,13 +39,12 @@ jobs:
               echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
           fi    
          
-      - name: 'Install Salesforce CLI'
-        run: |
-                  npm install --global sf
       - name: Install Salesforce CLI (sf)
         run: |
-                  npm install --global sf
-                  echo "$(npm bin -g)" >> $GITHUB_PATH  # <-- This adds sf to the PATH!
+                npm install --global sf
+                export PATH="$(npm bin -g):$PATH"
+                echo "PATH=$PATH" >> $GITHUB_ENV
+                which sf        
 
       - name: Install Salesforce CLI
         run: |
