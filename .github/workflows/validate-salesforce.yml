@@ -78,12 +78,13 @@ jobs:
 
       - name: 'Deploy changes/destructive changes (if any)'
         run: |
-                
+                 if [ "${{ env.APEX_TESTS }}" == "all" ]; then
+                    echo "Running deployment with no tests" 
                     sf project deploy validate \
                     --manifest manifest/deployPackage.xml \
                     --pre-destructive-changes manifest/destructiveChangesPre.xml \
                     --post-destructive-changes manifest/destructiveChangesPost.xml \
-                    --target-org gowtham.subbe.gowd@.1234 \ 
+                    --target-org hariharanpec2020@gmail.com \ 
                     --wait 10 \
                     --verbose \
                     --test-level NoTestRun
@@ -93,7 +94,7 @@ jobs:
                     --manifest manifest/deployPackage.xml \
                     --pre-destructive-changes manifest/destructiveChangesPre.xml \
                     --post-destructive-changes manifest/destructiveChangesPost.xml \
-                    --target-org gowtham.subbe.gowd@.1234 \ 
+                    --target-org hariharanpec2020@gmail.com \ 
                     --wait 10 \
                     --verbose \
                     --test-level RunSpecifiedTests \
