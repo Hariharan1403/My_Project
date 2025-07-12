@@ -38,8 +38,6 @@ jobs:
               TESTS=all
               echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
           fi    
-           
-
       - name: Install Salesforce CLI
         run: |
                 npm install --global sfdx-cli@latest
