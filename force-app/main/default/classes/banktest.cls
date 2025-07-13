@@ -46,13 +46,13 @@ private class banktest {
 
     @isTest
     static void depositAccountFailedTest() {
-        try {
-            BankAccountController.deposit('9999', 1000);
-            System.assert(false); // should not reach here
-        } catch (BankAccountController.InvalidAccountNumberException e) {
-            System.assertEquals('No such account', e.getMessage());
-        }
+    try {
+        BankAccountController.deposit('9999', 1000);
+        System.assert(false); // We should not reach here
+    } catch (BankAccountController.InvalidAccountNumberException e) {
+        System.assertEquals('No such account', e.getMessage());
     }
+}
 
     @isTest
     static void withdrawSuccessTest() {
