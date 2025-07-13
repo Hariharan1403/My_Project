@@ -88,7 +88,7 @@ jobs:
                     --target-org hariharanpec2020@gmail.com \
                     --wait 10 \
                     --verbose \
-                    --test-level NoTestRun
+                    --test-level RunLocalTests
                  elif [ "${{ env.APEX_TESTS }}" != "all" ]; then
                     echo "Running deployment with specified tests: ${{ env.APEX_TESTS }}"                                  
                     sf project deploy validate \
