@@ -22,23 +22,23 @@
 @isTest
 private class banktest {
 
-   // @isTest
-    // static void getAllAccountsTest() {
-    //     List<Bank_Account__c> acc=BankAccountController.getAllAccounts();
-    //     System.Assert.isNotNull(acc);
-    //     // TO DO: implement unit test
-    // }
-//     @isTest
-//     static void getAccountTest() {
-//         Bank_Account__c acc1=new Bank_Account__c();
-//          acc1.Name='Shatrughna';
-//          acc1.Account_Number__c='123';
-//          acc1.Balance__c=100;
-//          insert acc1;
-//         Bank_Account__c acc=BankAccountController.getFoundAccount('123');
-//         Assert.isNotNull(acc);
-//         // TO DO: implement unit test
-// }
+    @isTest
+     static void getAllAccountsTest() {
+         List<Bank_Account__c> acc=BankAccountController.getAllAccounts();
+         System.Assert.isNotNull(acc);
+         // TO DO: implement unit test
+   }
+     @isTest
+     static void getAccountTest() {
+         Bank_Account__c acc1=new Bank_Account__c();
+          acc1.Name='Shatrughna';
+          acc1.Account_Number__c='123';
+          acc1.Balance__c=100;
+          insert acc1;
+         Bank_Account__c acc=BankAccountController.getFoundAccount('123');
+         Assert.isNotNull(acc);
+         // TO DO: implement unit test
+ }
 @isTest()
 static void depositAccountTest(){
     Bank_Account__c acc1=new Bank_Account__c();
