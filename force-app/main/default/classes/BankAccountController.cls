@@ -1,4 +1,8 @@
 public with sharing class BankAccountController {
+
+    // ✅ Add this!
+    public class InvalidAccountNumberException extends Exception {}
+
     @AuraEnabled(cacheable=true)
     public static List<Bank_Account__c> getAllAccounts(){
         return [select Name,Account_Number__c,Balance__c,Account_Type__c from Bank_Account__c];

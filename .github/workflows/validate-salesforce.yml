@@ -38,10 +38,11 @@ jobs:
               TESTS=all
               echo "APEX_TESTS=$TESTS" >> $GITHUB_ENV
           fi    
-         
-      - name: 'Install Salesforce CLI'
+      - name: Install Salesforce CLI
         run: |
-                  npm install --global sfdx-cli@latest
+                npm install -g @salesforce/cli@latest
+                sf --version
+
       - name: 'Installing sfdx git delta'
         run: |
                   echo y | sfdx plugins:install sfdx-git-delta
@@ -84,7 +85,7 @@ jobs:
                     --manifest manifest/deployPackage.xml \
                     --pre-destructive-changes manifest/destructiveChangesPre.xml \
                     --post-destructive-changes manifest/destructiveChangesPost.xml \
-                    --target-org hariharanpec2020@gmail.com \ 
+                    --target-org hariharanpec2020@gmail.com \
                     --wait 10 \
                     --verbose \
                     --test-level NoTestRun
@@ -94,7 +95,7 @@ jobs:
                     --manifest manifest/deployPackage.xml \
                     --pre-destructive-changes manifest/destructiveChangesPre.xml \
                     --post-destructive-changes manifest/destructiveChangesPost.xml \
-                    --target-org hariharanpec2020@gmail.com \ 
+                    --target-org hariharanpec2020@gmail.com \
                     --wait 10 \
                     --verbose \
                     --test-level RunSpecifiedTests \
