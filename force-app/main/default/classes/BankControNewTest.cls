@@ -1,6 +1,5 @@
 @isTest
 private class BankControNewTest {
-
     @isTest
     static void testBankControllerOperations() {
         // Create BankController instance

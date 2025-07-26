@@ -45,8 +45,8 @@ jobs:
 
       - name: 'Installing sfdx git delta'
         run: |
-                  echo y | sfdx plugins:install sfdx-git-delta
-                  sfdx plugins
+                  echo y | sf plugins install sfdx-git-delta
+                  sf plugins
                  
       - name: 'Installing java'
         run: |
@@ -59,17 +59,17 @@ jobs:
                   echo ${{ secrets.SFDX_MAIN_URL}} > ./SFDX_MAIN_URL.txt
 
       - name: 'Authenticate to Main Org'
-        run: sfdx auth:sfdxurl:store -f ./SFDX_MAIN_URL.txt
+        run: sf org login sfdx-url -f ./SFDX_MAIN_URL.txt
 
 
       - name: 'Create delta packages for new, modified or deleted metadata'
         run: |
                   mkdir changed-sources
-                  sfdx sgd:source:delta --to "HEAD" --from "HEAD^" -o changed-sources/ --generate-delta -s force-app/
+                  sf sgd:source:delta --to "HEAD" --from "HEAD^" -o changed-sources/ --generate-delta -s force-app/
        
       - name: 'Create a manifest'
         run: |
-                  sfdx project generate manifest -p changed-sources -n manifest/deployPackage
+                  sf project generate manifest -p changed-sources -n manifest/deployPackage
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
@@ -77,27 +77,17 @@ jobs:
                 name: my-artifact-main
                 path: changed-sources/
 
-      - name: 'Deploy changes/destructive changes (if any)'
+      - name: 'Validate changes/destructive changes (if any)'
         run: |
+                 echo "Tests: ${{ env.APEX_TESTS }}"
                  if [ "${{ env.APEX_TESTS }}" == "all" ]; then
-                    echo "Running deployment with no tests" 
-                    sf project deploy validate \
-                    --manifest manifest/deployPackage.xml \
-                    --pre-destructive-changes manifest/destructiveChangesPre.xml \
-                    --post-destructive-changes manifest/destructiveChangesPost.xml \
-                    --target-org hariharanpec2020@gmail.com \
-                    --wait 10 \
-                    --verbose \
-                    --test-level NoTestRun
-                 elif [ "${{ env.APEX_TESTS }}" != "all" ]; then
-                    echo "Running deployment with specified tests: ${{ env.APEX_TESTS }}"                                  
-                    sf project deploy validate \
-                    --manifest manifest/deployPackage.xml \
-                    --pre-destructive-changes manifest/destructiveChangesPre.xml \
-                    --post-destructive-changes manifest/destructiveChangesPost.xml \
-                    --target-org hariharanpec2020@gmail.com \
-                    --wait 10 \
-                    --verbose \
-                    --test-level RunSpecifiedTests \
-                    --tests ${{ env.APEX_TESTS }}
-                 fi 
+                    echo "Running deployment with all tests"
+                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --dry-run --test-level RunLocalTests --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                 elif [ "${{ env.APEX_TESTS }}" == "" ]; then
+                    echo "Running deployment with no tests"
+                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --dry-run --test-level NoTestRun --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                 elif [[ "${{ env.APEX_TESTS }}" != "all" && "${{ env.APEX_TESTS }}" != "" ]]; then
+                    echo "Running deployment with specified tests"
+                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --dry-run --test-level RunSpecifiedTests -t ${{env.APEX_TESTS}} --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                 fi
+   
