@@ -23,7 +23,6 @@ system.debug(recordid);
 
 decimal dc=9.33423;
 system.debug(dc);
-
 system.debug('this is static statement');
     }
     
