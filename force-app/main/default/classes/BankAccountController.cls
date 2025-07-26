@@ -1,6 +1,5 @@
 public with sharing class BankAccountController {
 
-    // ✅ Add this!
     public class InvalidAccountNumberException extends Exception {}
 
     @AuraEnabled(cacheable=true)
