@@ -24,37 +24,31 @@ jobs:
       - name: Get PR Info for Push
         id: pr_info
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sudo apt-get update && sudo apt-get install -y jq
-          echo "${GH_TOKEN}" | gh auth login --with-token
+            BASE_BRANCH="${GITHUB_REF_NAME}"
+            PR_JSON=$(gh pr list \
+              --state merged \
+              --base "$BASE_BRANCH" \
+              --limit 1 \
+              --json headRefName,baseRefName \
+              --sort updated)
 
-          # Branch where the push happened
-          BASE_BRANCH="${GITHUB_REF_NAME}"
+            HEAD_BRANCH=$(echo "$PR_JSON" | jq -r '.[0].headRefName')
+            BASE_FROM_PR=$(echo "$PR_JSON" | jq -r '.[0].baseRefName')
+            
+            if [ "$HEAD_BRANCH" = "null" ] || [ -z "$HEAD_BRANCH" ]; then
+             HEAD_BRANCH="$BASE_BRANCH"
+             BASE_FROM_PR="$BASE_BRANCH"
+            fi
 
-          # Find the latest merged PR that affected this branch
-          PR_JSON=$(gh pr list \
-            --state merged \
-            --base "$BASE_BRANCH" \
-            --limit 1 \
-            --json headRefName,baseRefName \
-            --sort updated)
+            echo "Base branch: $BASE_FROM_PR"
+            echo "Head branch: $HEAD_BRANCH"
 
-          HEAD_BRANCH=$(echo "$PR_JSON" | jq -r '.[0].headRefName')
-          BASE_FROM_PR=$(echo "$PR_JSON" | jq -r '.[0].baseRefName')
 
-          # Fallback if no PR was found (direct push)
-          if [ "$HEAD_BRANCH" = "null" ] || [ -z "$HEAD_BRANCH" ]; then
-            HEAD_BRANCH="$BASE_BRANCH"
-            BASE_FROM_PR="$BASE_BRANCH"
-          fi
+             echo "BASE_BRANCH=$BASE_FROM_PR" >> $GITHUB_ENV
+             echo "HEAD_BRANCH=$HEAD_BRANCH" >> $GITHUB_ENV
 
-          echo "Base branch: $BASE_FROM_PR"
-          echo "Head branch: $HEAD_BRANCH"
-
-          # Export to environment
-          echo "BASE_BRANCH=$BASE_FROM_PR" >> $GITHUB_ENV
-          echo "HEAD_BRANCH=$HEAD_BRANCH" >> $GITHUB_ENV
 
       - name: 'Read PR Body'
         env:
