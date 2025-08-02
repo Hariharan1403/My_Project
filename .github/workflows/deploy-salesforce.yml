@@ -29,7 +29,7 @@ jobs:
         env:
            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            BASE_BRANCH="${GITHUB_REF_NAME}"
+            BASE_BRANCH="${{ github.ref_name }}"
            
       - name: 'Read PR Body'
         env:
@@ -67,10 +67,10 @@ jobs:
       - name: 'Populate auth file with SFDX_URL secret of org'
         shell: bash
         run: |
-             if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+             if [[ "${{ github.ref_name }}" == "main" ]]; then
                  echo "${{ secrets.SFDX_MAIN_URL }}" > ./SFDX_URL.txt
                  echo "TARGET_ORG=hariharanpec2020@gmail.com" >> $GITHUB_ENV
-             elif [[ "${{ github.base_ref }}" == "1stFeature-DeployChanges" ]]; then
+             elif [[ "$${{ github.ref_name }}" == "1stFeature-DeployChanges" ]]; then
                  echo "${{ secrets.SFDX_MAIN_URL }}" > ./SFDX_URL.txt
                  echo "TARGET_ORG=hariharanpec2020@gmail.com" >> $GITHUB_ENV
              fi
