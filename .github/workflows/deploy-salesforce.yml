@@ -31,8 +31,7 @@ jobs:
               --state merged \
               --base "$BASE_BRANCH" \
               --limit 1 \
-              --json headRefName,baseRefName \
-              --sort updated)
+              --json headRefName,baseRefName)
 
             HEAD_BRANCH=$(echo "$PR_JSON" | jq -r '.[0].headRefName')
             BASE_FROM_PR=$(echo "$PR_JSON" | jq -r '.[0].baseRefName')
