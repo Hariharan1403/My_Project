@@ -2,7 +2,10 @@ name: Salesforce Deployment MAIN
  
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+      - 1stFeature-DeployChanges
+      
     paths:
         - 'force-app/**'
         - 'manifest/**'
@@ -26,29 +29,8 @@ jobs:
         env:
            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            BASE_BRANCH="${GITHUB_REF_NAME}"
-            PR_JSON=$(gh pr list \
-              --state merged \
-              --base "$BASE_BRANCH" \
-              --limit 1 \
-              --json headRefName,baseRefName)
-
-            HEAD_BRANCH=$(echo "$PR_JSON" | jq -r '.[0].headRefName')
-            BASE_FROM_PR=$(echo "$PR_JSON" | jq -r '.[0].baseRefName')
-            
-            if [ "$HEAD_BRANCH" = "null" ] || [ -z "$HEAD_BRANCH" ]; then
-             HEAD_BRANCH="$BASE_BRANCH"
-             BASE_FROM_PR="$BASE_BRANCH"
-            fi
-
-            echo "Base branch: $BASE_FROM_PR"
-            echo "Head branch: $HEAD_BRANCH"
-
-
-             echo "BASE_BRANCH=$BASE_FROM_PR" >> $GITHUB_ENV
-             echo "HEAD_BRANCH=$HEAD_BRANCH" >> $GITHUB_ENV
-
-
+            BASE_BRANCH="${{ github.ref_name }}"
+           
       - name: 'Read PR Body'
         env:
                 PR_BODY: ${{github.event.pull_request.body}}
@@ -85,10 +67,16 @@ jobs:
       - name: 'Populate auth file with SFDX_URL secret of org'
         shell: bash
         run: |
-                  echo ${{ secrets.SFDX_MAIN_URL}} > ./SFDX_MAIN_URL.txt
-
+             if [[ "${{ github.ref_name }}" == "main" ]]; then
+                 echo "${{ secrets.SFDX_MAIN_URL }}" > ./SFDX_URL.txt
+                 echo "TARGET_ORG=hariharanpec2020@gmail.com" >> $GITHUB_ENV
+             elif [[ "$${{ github.ref_name }}" == "1stFeature-DeployChanges" ]]; then
+                 echo "${{ secrets.SFDX_MAIN_URL }}" > ./SFDX_URL.txt
+                 echo "TARGET_ORG=hariharanpec2020@gmail.com" >> $GITHUB_ENV
+             fi
+             
       - name: 'Authenticate to Main Org'
-        run: sf org login sfdx-url -f ./SFDX_MAIN_URL.txt
+        run: sf org login sfdx-url -f ./SFDX_URL.txt
 
 
       - name: 'Create delta packages for new, modified or deleted metadata'
@@ -111,11 +99,11 @@ jobs:
                  echo "Tests: ${{ env.APEX_TESTS }}"
                  if [ "${{ env.APEX_TESTS }}" == "all" ]; then
                     echo "Running deployment with all tests"
-                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --test-level RunLocalTests --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --test-level RunLocalTests --target-org $TARGET_ORG -w 10 --verbose
                  elif [ "${{ env.APEX_TESTS }}" == "" ]; then
                     echo "Running deployment with no tests"
-                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --test-level NoTestRun --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --test-level NoTestRun --target-org $TARGET_ORG -w 10 --verbose
                  elif [[ "${{ env.APEX_TESTS }}" != "all" && "${{ env.APEX_TESTS }}" != "" ]]; then
                     echo "Running deployment with specified tests"
-                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --test-level RunSpecifiedTests -t ${{env.APEX_TESTS}} --target-org hariharanpec2020@gmail.com -w 10 --verbose
+                          sf project deploy start --manifest manifest/deployPackage.xml --pre-destructive-changes manifest/destructiveChangesPre.xml --post-destructive-changes manifest/destructiveChangesPost.xml --test-level RunSpecifiedTests -t ${{env.APEX_TESTS}} --target-org $TARGET_ORG -w 10 --verbose
                  fi
