@@ -1,12 +1,11 @@
-
 name: Salesforce Deployment MAIN
  
 on:
   pull_request:
     types: [opened, synchronize]
     branches: 
-      -main
-      -1stFeature-DeployChanges
+      - main
+      - 1stFeature-DeployChanges
       
     paths:
         - 'force-app/**'
