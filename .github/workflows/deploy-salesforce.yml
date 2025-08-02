@@ -55,6 +55,7 @@ jobs:
           # Export to environment
           echo "BASE_BRANCH=$BASE_FROM_PR" >> $GITHUB_ENV
           echo "HEAD_BRANCH=$HEAD_BRANCH" >> $GITHUB_ENV
+
       - name: 'Read PR Body'
         env:
                 PR_BODY: ${{github.event.pull_request.body}}
