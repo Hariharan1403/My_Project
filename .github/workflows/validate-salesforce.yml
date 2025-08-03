@@ -6,26 +6,19 @@ on:
     branches: 
       - main
       - 1stFeature-DeployChanges
+      - ReusableWorkflow
       
     paths:
         - 'force-app/**'
         - 'manifest/**'
  
 jobs:
+  call-build:
+    uses: ./.github/workflows/installingUbuntu.yml
+
   validate:
-    runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' }}
-    steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
-           
+     runs-on: ubuntu-latest
+     steps:     
       - name: 'Read PR Body'
         env:
                 PR_BODY: ${{github.event.pull_request.body}}
