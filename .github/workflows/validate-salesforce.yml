@@ -6,6 +6,7 @@ on:
     branches: 
       - main
       - 1stFeature-DeployChanges
+      - ReusableWorkflow
       
     paths:
         - 'force-app/**'
