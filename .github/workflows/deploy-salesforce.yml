@@ -9,9 +9,6 @@ on:
     paths:
         - 'force-app/**'
         - 'manifest/**'
-
-
- 
 jobs:
   deploy:
     runs-on: ubuntu-latest
