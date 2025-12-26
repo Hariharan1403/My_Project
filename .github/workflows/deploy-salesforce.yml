@@ -70,7 +70,7 @@ jobs:
              if [[ "${{ github.ref_name }}" == "main" ]]; then
                  echo "${{ secrets.SFDX_MAIN_URL }}" > ./SFDX_URL.txt
                  echo "TARGET_ORG=hariharanpec2020@gmail.com" >> $GITHUB_ENV
-             elif [[ "$${{ github.ref_name }}" == "1stFeature-DeployChanges" ]]; then
+             elif [[ "${{ github.ref_name }}" == "1stFeature-DeployChanges" ]]; then
                  echo "${{ secrets.SFDX_MAIN_URL }}" > ./SFDX_URL.txt
                  echo "TARGET_ORG=hariharanpec2020@gmail.com" >> $GITHUB_ENV
              fi
